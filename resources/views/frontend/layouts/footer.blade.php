@@ -1,4 +1,4 @@
-<footer class="w-full border-t bg-slate-50 border-slate-200">
+<footer class="w-full border-t bg-slate-50 border-slate-200 dark:bg-gray-900/95 dark:border-gray-800">
 
     <div
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -106,33 +106,7 @@
                 Qualifications
             </h4>
 
-            <ul class="space-y-2 text-sm">
-
-                <li>
-                    <a href="{{ route('qualifications') }}" class="text-slate-500 hover:text-slate-900">
-                        Hospitality
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('qualifications') }}" class="text-slate-500 hover:text-slate-900">
-                        Retail
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('qualifications') }}" class="text-slate-500 hover:text-slate-900">
-                        Manufacturing
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('qualifications') }}" class="text-slate-500 hover:text-slate-900">
-                        Business
-                    </a>
-                </li>
-
-            </ul>
+           
 
         </div>
 
@@ -186,7 +160,7 @@
 
 
     {{-- Bottom Bar --}}
-    <div class="border-t border-slate-200 py-6">
+    <div class="border-t border-slate-200 py-6 dark:border-gray-800">
 
         <div
             class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
