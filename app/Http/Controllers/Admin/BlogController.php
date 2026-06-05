@@ -30,6 +30,7 @@ class BlogController extends Controller
     {
         $blogs = $this->blogRepository
             ->paginate(15);
+
         return view(
             'backend.pages.blogs.index',
             compact('blogs')
@@ -52,80 +53,80 @@ class BlogController extends Controller
     /**
      * Store Blog
      */
-public function store(BlogStoreRequest $request)
-{
-    $data = $request->validated();
-    $blogData = [];
+    public function store(BlogStoreRequest $request)
+    {
+        $data = $request->validated();
+        $blogData = [];
 
-    DB::beginTransaction();
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        $blogData = Arr::only($data, [
-            'title',
-            'short_description',
-            'content',
-            'category_id',
-            'status',
-        ]);
+            $blogData = Arr::only($data, [
+                'title',
+                'short_description',
+                'content',
+                'category_id',
+                'status',
+            ]);
 
-        $blogData['slug'] = $this->generateUniqueSlug($request->title);
-        $blogData['author_id'] = auth()->id();
-        $blogData['is_featured'] = $request->boolean('is_featured');
+            $blogData['slug'] = $this->generateUniqueSlug($request->title);
+            $blogData['author_id'] = auth()->id();
+            $blogData['is_featured'] = $request->boolean('is_featured');
 
-        if ($request->status === 'published') {
-            $blogData['published_at'] = now();
-        }
-
-        if ($request->hasFile('featured_image')) {
-
-            $file = $request->file('featured_image');
-
-            $destinationPath = public_path('uploads/blogs');
-
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0775, true);
+            if ($request->status === 'published') {
+                $blogData['published_at'] = now();
             }
 
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            if ($request->hasFile('featured_image')) {
 
-            $file->move($destinationPath, $fileName);
+                $file = $request->file('featured_image');
 
-            $blogData['featured_image'] = 'uploads/blogs/' . $fileName;
+                $destinationPath = public_path('uploads/blogs');
+
+                if (! file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0775, true);
+                }
+
+                $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+
+                $file->move($destinationPath, $fileName);
+
+                $blogData['featured_image'] = 'uploads/blogs/'.$fileName;
+            }
+
+            $blog = $this->blogRepository->create($blogData);
+
+            $seoData = Arr::only($data, [
+                'meta_title',
+                'meta_description',
+                'meta_keywords',
+            ]);
+
+            $seoData['path'] = $this->uniqueSeoPathForSlug($blog->slug, 'blogs');
+
+            $blog->seoMeta()->create($seoData);
+
+            DB::commit();
+
+            return redirect()
+                ->route('role.blogs.index', ['role' => $request->route('role')])
+                ->with('success', 'Blog created successfully.');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
-
-        $blog = $this->blogRepository->create($blogData);
-
-        $seoData = Arr::only($data, [
-            'meta_title',
-            'meta_description',
-            'meta_keywords',
-        ]);
-
-        $seoData['path'] = $this->uniqueSeoPathForSlug($blog->slug, 'blogs');
-
-        $blog->seoMeta()->create($seoData);
-
-        DB::commit();
-
-        return redirect()
-            ->route('admin.blogs.index')
-            ->with('success', 'Blog created successfully.');
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        return back()
-            ->withInput()
-            ->with('error', $e->getMessage());
     }
-}
 
     /**
      * Edit Page
      */
-    public function edit(Blog $blog)
+    public function edit(string $role, Blog $blog)
     {
         $blog->load('seoMeta');
 
@@ -141,149 +142,150 @@ public function store(BlogStoreRequest $request)
     /**
      * Update Blog
      */
-  public function update(
-    BlogUpdateRequest $request,
-    Blog $blog
-) {
-    $data = [];
-    $blogData = [];
+    public function update(
+        BlogUpdateRequest $request,
+        string $role,
+        Blog $blog
+    ) {
+        $data = [];
+        $blogData = [];
 
-    DB::beginTransaction();
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        $data = $request->validated();
+            $data = $request->validated();
 
-        /*
-        |--------------------------------------------------------------------------
-        | SLUG
-        |--------------------------------------------------------------------------
-        */
-        $slug = $blog->slug;
+            /*
+            |--------------------------------------------------------------------------
+            | SLUG
+            |--------------------------------------------------------------------------
+            */
+            $slug = $blog->slug;
 
-        if ($blog->title !== $request->title) {
-            $slug = $this->generateUniqueSlug($request->title, $blog->id);
-        }
-
-        $blogData = Arr::only($data, [
-            'title',
-            'short_description',
-            'content',
-            'category_id',
-            'status',
-        ]);
-
-        $blogData['slug'] = $slug;
-        $blogData['is_featured'] = $request->boolean('is_featured');
-
-        if ($request->status === 'published' && !$blog->published_at) {
-            $blogData['published_at'] = now();
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | OLD IMAGE
-        |--------------------------------------------------------------------------
-        */
-        $oldFeaturedImage = $blog->featured_image;
-
-        /*
-        |--------------------------------------------------------------------------
-        | NEW IMAGE UPLOAD (PUBLIC FOLDER FIX)
-        |--------------------------------------------------------------------------
-        */
-        if ($request->hasFile('featured_image')) {
-
-            $file = $request->file('featured_image');
-
-            $destinationPath = public_path('uploads/blogs');
-
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0775, true);
+            if ($blog->title !== $request->title) {
+                $slug = $this->generateUniqueSlug($request->title, $blog->id);
             }
 
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-            $file->move($destinationPath, $fileName);
-
-            $blogData['featured_image'] = 'uploads/blogs/' . $fileName;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | APPLY DATA
-        |--------------------------------------------------------------------------
-        */
-        $blog->fill($blogData);
-
-        if (!$blog->isDirty()) {
-            return redirect()
-                ->route('admin.blogs.edit', $blog)
-                ->with('success', 'No changes to update.');
-        }
-
-        DB::commit(); // commit BEFORE file delete + save
-
-        /*
-        |--------------------------------------------------------------------------
-        | DELETE OLD IMAGE
-        |--------------------------------------------------------------------------
-        */
-        if (
-            $request->hasFile('featured_image') &&
-            $oldFeaturedImage &&
-            file_exists(public_path($oldFeaturedImage))
-        ) {
-            unlink(public_path($oldFeaturedImage));
-        }
-
-        $blog->save();
-
-        /*
-        |--------------------------------------------------------------------------
-        | SEO UPDATE
-        |--------------------------------------------------------------------------
-        */
-        $seoData = Arr::only($data, [
-            'meta_title',
-            'meta_description',
-            'meta_keywords',
-        ]);
-
-        $seo = $blog->seoMeta;
-
-        if (!$seo) {
-            $seo = $blog->seoMeta()->create([
-                'path' => $this->uniqueSeoPathForSlug($blog->slug, 'blogs'),
+            $blogData = Arr::only($data, [
+                'title',
+                'short_description',
+                'content',
+                'category_id',
+                'status',
             ]);
+
+            $blogData['slug'] = $slug;
+            $blogData['is_featured'] = $request->boolean('is_featured');
+
+            if ($request->status === 'published' && ! $blog->published_at) {
+                $blogData['published_at'] = now();
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | OLD IMAGE
+            |--------------------------------------------------------------------------
+            */
+            $oldFeaturedImage = $blog->featured_image;
+
+            /*
+            |--------------------------------------------------------------------------
+            | NEW IMAGE UPLOAD (PUBLIC FOLDER FIX)
+            |--------------------------------------------------------------------------
+            */
+            if ($request->hasFile('featured_image')) {
+
+                $file = $request->file('featured_image');
+
+                $destinationPath = public_path('uploads/blogs');
+
+                if (! file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0775, true);
+                }
+
+                $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+
+                $file->move($destinationPath, $fileName);
+
+                $blogData['featured_image'] = 'uploads/blogs/'.$fileName;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | APPLY DATA
+            |--------------------------------------------------------------------------
+            */
+            $blog->fill($blogData);
+
+            if (! $blog->isDirty()) {
+                return redirect()
+                    ->route('role.blogs.edit', ['role' => $request->route('role'), 'blog' => $blog])
+                    ->with('success', 'No changes to update.');
+            }
+
+            DB::commit(); // commit BEFORE file delete + save
+
+            /*
+            |--------------------------------------------------------------------------
+            | DELETE OLD IMAGE
+            |--------------------------------------------------------------------------
+            */
+            if (
+                $request->hasFile('featured_image') &&
+                $oldFeaturedImage &&
+                file_exists(public_path($oldFeaturedImage))
+            ) {
+                unlink(public_path($oldFeaturedImage));
+            }
+
+            $blog->save();
+
+            /*
+            |--------------------------------------------------------------------------
+            | SEO UPDATE
+            |--------------------------------------------------------------------------
+            */
+            $seoData = Arr::only($data, [
+                'meta_title',
+                'meta_description',
+                'meta_keywords',
+            ]);
+
+            $seo = $blog->seoMeta;
+
+            if (! $seo) {
+                $seo = $blog->seoMeta()->create([
+                    'path' => $this->uniqueSeoPathForSlug($blog->slug, 'blogs'),
+                ]);
+            }
+
+            $seoData['path'] = $this->uniqueSeoPathForSlug(
+                $blog->slug,
+                'blogs',
+                $seo->id
+            );
+
+            $seo->update($seoData);
+
+            return redirect()
+                ->route('role.blogs.index', ['role' => $request->route('role')])
+                ->with('success', 'Blog updated successfully.');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
-
-        $seoData['path'] = $this->uniqueSeoPathForSlug(
-            $blog->slug,
-            'blogs',
-            $seo->id
-        );
-
-        $seo->update($seoData);
-
-        return redirect()
-            ->route('admin.blogs.index')
-            ->with('success', 'Blog updated successfully.');
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        return back()
-            ->withInput()
-            ->with('error', $e->getMessage());
     }
-}
 
     /**
      * Delete Blog
      */
-    public function destroy(Blog $blog)
+    public function destroy(string $role, Blog $blog)
     {
         DB::beginTransaction();
 
@@ -317,7 +319,7 @@ public function store(BlogStoreRequest $request)
             DB::commit();
 
             return redirect()
-                ->route('admin.blogs.index')
+                ->route('role.blogs.index', ['role' => $role])
                 ->with(
                     'success',
                     'Blog deleted successfully.'
@@ -348,22 +350,22 @@ public function store(BlogStoreRequest $request)
 
         $count = $query->count();
 
-        return $count ? "{$slug}-" . ($count + 1) : $slug;
+        return $count ? "{$slug}-".($count + 1) : $slug;
     }
 
     private function uniqueSeoPathForSlug(string $slug, string $prefix, ?int $ignoreSeoId = null): string
     {
-        $base = $prefix . '/' . $slug;
+        $base = $prefix.'/'.$slug;
 
         $query = SeoMeta::where('path', $base);
         if ($ignoreSeoId) {
             $query->where('id', '!=', $ignoreSeoId);
         }
 
-        if (!$query->exists()) {
+        if (! $query->exists()) {
             return $base;
         }
 
-        return $base . '-' . now()->timestamp;
+        return $base.'-'.now()->timestamp;
     }
 }

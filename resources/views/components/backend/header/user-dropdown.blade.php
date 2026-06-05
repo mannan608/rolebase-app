@@ -108,7 +108,7 @@
         </ul>
 
         <!-- Sign Out -->
-        <form method="POST" action="{{ route('admin.logout') }}">
+        <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button
                 type="submit"

@@ -22,7 +22,7 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400">Manage Meta tags, Open Graph, and Schema for all routes.
                 </p>
             </div>
-            <a href="{{ route('admin.events.create') }}"
+            <a href="{{ role_route('role.events.create') }}"
                 class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-600 transition-colors">
                 + Add New Events
             </a>

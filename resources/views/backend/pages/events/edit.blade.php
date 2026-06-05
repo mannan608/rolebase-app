@@ -32,7 +32,7 @@
 @endphp
 
 @section('content')
-    <form action="{{ route('admin.events.update', $event) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ role_route('role.events.update', ['event' => $event]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">

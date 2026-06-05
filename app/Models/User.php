@@ -3,14 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable;
 
     /**
@@ -22,6 +25,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'status',
+        'primary_role_id',
     ];
 
     /**
@@ -45,5 +50,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function primaryRole(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'primary_role_id');
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === config('rbac.active_status', 'active');
+    }
+
+    public function primaryRoleName(): ?string
+    {
+        return user_primary_role($this);
+    }
+
+    public function rolePrefix(): ?string
+    {
+        return user_role_prefix($this);
     }
 }

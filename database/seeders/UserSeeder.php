@@ -11,27 +11,32 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-      // Super Admin
-        User::updateOrCreate(
+        $superAdminRole = Role::where('name', config('rbac.super_admin_role'))->firstOrFail();
+        $adminRole = Role::where('name', 'admin')->firstOrFail();
+
+        $superAdmin = User::updateOrCreate(
             ['email' => 'superadmin@gmail.com'],
             [
                 'name' => 'Super Admin',
                 'email_verified_at' => now(),
                 'password' => Hash::make('12345678'),
-                'role' => 'super_admin',
+                'status' => 'active',
+                'primary_role_id' => $superAdminRole->id,
             ]
         );
 
-        // Admin (Spatie Managed)
         $admin = User::updateOrCreate(
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin User',
                 'email_verified_at' => now(),
                 'password' => Hash::make('12345678'),
-                'role' => 'admin',
+                'status' => 'active',
+                'primary_role_id' => $adminRole->id,
             ]
         );
-        $admin->assignRole('admin');    
+
+        $superAdmin->syncRoles([$superAdminRole]);
+        $admin->syncRoles([$adminRole]);
     }
 }

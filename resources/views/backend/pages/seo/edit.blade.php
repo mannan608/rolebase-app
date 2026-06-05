@@ -19,7 +19,7 @@
                 $footerScripts = is_array($footerScripts) && count($footerScripts) ? $footerScripts : [''];
             @endphp
 
-            <form action="{{ route('admin.seo.update', $seo) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ role_route('role.seo.update', ['seo' => $seo]) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
                 <div class="space-y-3">

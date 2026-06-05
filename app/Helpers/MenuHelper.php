@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Auth;
+
 class MenuHelper
 {
     public static function getMainNavItems()
@@ -10,51 +12,86 @@ class MenuHelper
             [
                 'icon' => 'dashboard',
                 'name' => 'Dashboard',
-                'path' => '/admin/dashboard',
-                'permission' => 'view_dashboard',
+                'route' => 'role.dashboard',
+                'permission' => 'dashboard.view',
             ],
             [
                 'name' => 'Manage Courses',
                 'icon' => 'pages',
-                'path' => '/admin/courses',
-                'permission' => 'view_courses',
+                'path' => self::rolePath('courses'),
+                'permission' => 'course.list',
             ],
             [
                 'name' => 'Roles & Permissions',
                 'icon' => 'pages',
-                'path' => '/admin/roles-permissions',
-                'permission' => 'view_roles',
+                'route' => 'role.roles-permissions.index',
+                'permission' => 'role.list',
             ],
             [
                 'name' => 'Users',
                 'icon' => 'user-profile',
-                'path' => '/admin/users',
-                'permission' => 'view_users',
+                'route' => 'role.users.index',
+                'permission' => 'user.list',
             ],
 
-             [
+            [
                 'name' => 'Reports',
                 'icon' => 'reports',
                 'subItems' => [
-                    ['name' => 'User Reports', 'path' => '/admin/user-reports', 'permission' => 'view_user_reports'],
-                    ['name' => 'Course Reports', 'path' => '/admin/course-reports', 'permission' => 'view_course_reports'],
+                    ['name' => 'User Reports', 'path' => self::rolePath('user-reports'), 'permission' => 'report.user.view'],
+                    ['name' => 'Course Reports', 'path' => self::rolePath('course-reports'), 'permission' => 'report.course.view'],
                 ],
             ],
-             
+
         ];
     }
-
-
 
     public static function getMenuGroups()
     {
         return [
             [
                 'title' => 'Menu',
-                'items' => self::getMainNavItems()
+                'items' => self::visibleItems(self::getMainNavItems()),
             ],
 
         ];
+    }
+
+    public static function rolePath(string $path): string
+    {
+        return '/'.trim((string) user_role_prefix(), '/').'/'.trim($path, '/');
+    }
+
+    public static function itemUrl(array $item): string
+    {
+        if (isset($item['route'])) {
+            return role_route($item['route']);
+        }
+
+        return $item['path'] ?? '#';
+    }
+
+    public static function visibleItems(array $items): array
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map(function (array $item) use ($user): ?array {
+            if (isset($item['subItems'])) {
+                $item['subItems'] = self::visibleItems($item['subItems']);
+
+                return count($item['subItems']) > 0 ? $item : null;
+            }
+
+            if (! isset($item['permission']) || $user->can($item['permission'])) {
+                return $item;
+            }
+
+            return null;
+        }, $items)));
     }
 
     public static function isActive($path)

@@ -18,7 +18,7 @@
                         </div>
                         <div>                           
                            
-                            <form method="POST" action="{{ route('admin.login.submit') }}">
+                            <form method="POST" action="{{ route('login.submit') }}">
                                 @csrf
                                 <div class="space-y-5">
                                     @if ($errors->any())

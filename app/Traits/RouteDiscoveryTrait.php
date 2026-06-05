@@ -15,8 +15,10 @@ trait RouteDiscoveryTrait
         'sanctum.*',
         'ignition.*',
         'qualifications.details',
-        'admin.login',
-        'admin.*',
+        'login',
+        'login.submit',
+        'logout',
+        'role.*',
         'password.*',
         'storage.local*',
     ];
@@ -35,7 +37,7 @@ trait RouteDiscoveryTrait
         */
         foreach (Route::getRoutes() as $route) {
 
-            if (!$this->isValidRoute($route)) {
+            if (! $this->isValidRoute($route)) {
                 continue;
             }
 
@@ -57,21 +59,21 @@ trait RouteDiscoveryTrait
         | Dynamic Course Routes
         |--------------------------------------------------------------------------
         */
-       
+
         if (method_exists($this, 'getCourses')) {
 
-    foreach ($this->getCourses() as $course) {
+            foreach ($this->getCourses() as $course) {
 
-        if (!isset($course['slug'], $course['title'])) {
-            continue;
+                if (! isset($course['slug'], $course['title'])) {
+                    continue;
+                }
+
+                // Generates: qualifications/certificate-ii-in-hospitality
+                $key = route('qualifications.details', $course['slug'], false);
+
+                $routes[$key] = $course['title'];
+            }
         }
-
-        // Generates: qualifications/certificate-ii-in-hospitality
-        $key = route('qualifications.details', $course['slug'], false);
-
-        $routes[$key] = $course['title'];
-    }
-}
 
         return $routes;
     }
@@ -85,7 +87,7 @@ trait RouteDiscoveryTrait
 
         return $name
             && $this->isGetRoute($route)
-            && !$this->shouldSkipRoute($name);
+            && ! $this->shouldSkipRoute($name);
     }
 
     /**

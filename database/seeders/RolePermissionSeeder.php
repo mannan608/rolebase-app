@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -13,50 +14,84 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        // Create Permissions
         $permissions = [
-            // Core
-            'view_dashboard',
+            'dashboard.view',
 
-            // Courses
-            'view_courses',
-            'show_course',
-            'create_course',
-            'update_course',
-            'delete_course',
+            'course.list',
+            'course.view',
+            'course.create',
+            'course.edit',
+            'course.delete',
+            'course.report',
+            'course.export',
+            'course.import',
 
-            // Users
-            'view_users',
-            'show_user',
-            'create_user',
-            'update_user',
-            'delete_user',
+            'user.list',
+            'user.view',
+            'user.create',
+            'user.edit',
+            'user.delete',
+            'user.impersonate',
+            'user.status.change',
 
-            // Roles
-            'view_roles',
-            'show_role',
-            'create_role',
-            'update_role',
-            'delete_role',
+            'role.list',
+            'role.view',
+            'role.create',
+            'role.edit',
+            'role.delete',
+            'role.manage',
+            'permission.list',
+            'permission.sync',
 
-            //Reports
-            'view_user_reports',
-            'view_course_reports',
+            'blog.list',
+            'blog.view',
+            'blog.create',
+            'blog.edit',
+            'blog.delete',
+            'blog.publish',
+            'blog.manage',
+
+            'event.list',
+            'event.view',
+            'event.create',
+            'event.edit',
+            'event.delete',
+            'event.manage',
+
+            'seo.list',
+            'seo.view',
+            'seo.create',
+            'seo.edit',
+            'seo.delete',
+            'seo.manage',
+
+            'report.user.view',
+            'report.course.view',
+            'report.finance.view',
+            'report.export',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => config('rbac.default_guard', 'web'),
+            ]);
         }
 
-        // Create Spatie Role for Admin
-        // This is the role that the user with static role 'admin' will have
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $adminRole->givePermissionTo($permissions);
+        $superAdmin = Role::firstOrCreate([
+            'name' => config('rbac.super_admin_role'),
+            'guard_name' => config('rbac.default_guard', 'web'),
+        ]);
 
-        // We don't need a role for Super Admin because they bypass checks.
-        // We don't need a role for Employee because they have fixed access (or we could add one if we wanted granular employee perms later).
+        $adminRole = Role::firstOrCreate([
+            'name' => 'admin',
+            'guard_name' => config('rbac.default_guard', 'web'),
+        ]);
+
+        $adminRole->syncPermissions($permissions);
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

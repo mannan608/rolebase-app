@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 class SeoController extends Controller
 {
     use CourseTrait, RouteDiscoveryTrait;
+
     public function index()
     {
         $items = SeoMeta::latest()->paginate(20);
@@ -27,82 +28,82 @@ class SeoController extends Controller
         return view('backend.pages.seo.create', compact('routes'));
     }
 
-  public function store(StoreSeoRequest $request)
-{
-    $data = $request->validated();
+    public function store(StoreSeoRequest $request)
+    {
+        $data = $request->validated();
 
-    $data['path'] = $data['type'];
+        $data['path'] = $data['type'];
 
-    unset($data['type']);
+        unset($data['type']);
 
-    /*
-    |--------------------------------------------------------------------------
-    | OG IMAGE
-    |--------------------------------------------------------------------------
-    */
+        /*
+        |--------------------------------------------------------------------------
+        | OG IMAGE
+        |--------------------------------------------------------------------------
+        */
 
-    if ($request->hasFile('og_image')) {
+        if ($request->hasFile('og_image')) {
 
-        $ogImage = $request->file('og_image');
+            $ogImage = $request->file('og_image');
 
-        $ogImageName = time() . '_og_' . $ogImage->getClientOriginalName();
+            $ogImageName = time().'_og_'.$ogImage->getClientOriginalName();
 
-        $ogImage->move(
-            public_path('uploads/seo/og-images'),
-            $ogImageName
+            $ogImage->move(
+                public_path('uploads/seo/og-images'),
+                $ogImageName
+            );
+
+            $data['og_image'] = 'uploads/seo/og-images/'.$ogImageName;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TWITTER IMAGE
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->hasFile('twitter_image')) {
+
+            $twitterImage = $request->file('twitter_image');
+
+            $twitterImageName = time().'_twitter_'.$twitterImage->getClientOriginalName();
+
+            $twitterImage->move(
+                public_path('uploads/seo/twitter-images'),
+                $twitterImageName
+            );
+
+            $data['twitter_image'] = 'uploads/seo/twitter-images/'.$twitterImageName;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SCRIPTS
+        |--------------------------------------------------------------------------
+        */
+
+        $data['header_scripts'] = array_values(
+            array_filter($data['header_scripts'] ?? [])
         );
 
-        $data['og_image'] = 'uploads/seo/og-images/' . $ogImageName;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | TWITTER IMAGE
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->hasFile('twitter_image')) {
-
-        $twitterImage = $request->file('twitter_image');
-
-        $twitterImageName = time() . '_twitter_' . $twitterImage->getClientOriginalName();
-
-        $twitterImage->move(
-            public_path('uploads/seo/twitter-images'),
-            $twitterImageName
+        $data['footer_scripts'] = array_values(
+            array_filter($data['footer_scripts'] ?? [])
         );
 
-        $data['twitter_image'] = 'uploads/seo/twitter-images/' . $twitterImageName;
+        /*
+        |--------------------------------------------------------------------------
+        | CREATE
+        |--------------------------------------------------------------------------
+        */
+
+        SeoMeta::create($data);
+
+        return redirect()
+            ->route('role.seo.index', ['role' => $request->route('role')])
+            ->with('success', 'SEO data created successfully.');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | SCRIPTS
-    |--------------------------------------------------------------------------
-    */
-
-    $data['header_scripts'] = array_values(
-        array_filter($data['header_scripts'] ?? [])
-    );
-
-    $data['footer_scripts'] = array_values(
-        array_filter($data['footer_scripts'] ?? [])
-    );
-
-    /*
-    |--------------------------------------------------------------------------
-    | CREATE
-    |--------------------------------------------------------------------------
-    */
-
-    SeoMeta::create($data);
-
-    return redirect()
-        ->route('admin.seo.index')
-        ->with('success', 'SEO data created successfully.');
-}
-
-    public function edit(SeoMeta $seo)
+    public function edit(string $role, SeoMeta $seo)
     {
         $routes = $this->getRouteList();
 
@@ -112,7 +113,7 @@ class SeoController extends Controller
         ));
     }
 
-    public function update(UpdateSeoRequest $request, SeoMeta $seo)
+    public function update(UpdateSeoRequest $request, string $role, SeoMeta $seo)
     {
         $data = $this->filledUpdateData($request->validated());
 
@@ -126,7 +127,6 @@ class SeoController extends Controller
                 ->store('seo/og-images', 'public');
         }
 
-
         if ($request->hasFile('twitter_image')) {
 
             if ($seo->twitter_image) {
@@ -136,7 +136,6 @@ class SeoController extends Controller
             $data['twitter_image'] = $request->file('twitter_image')
                 ->store('seo/twitter-images', 'public');
         }
-
 
         $headerScripts = $this->filledScripts($request->input('header_scripts', []));
 
@@ -153,7 +152,7 @@ class SeoController extends Controller
         $seo->update($data);
 
         return redirect()
-            ->route('admin.seo.index')
+            ->route('role.seo.index', ['role' => $request->route('role')])
             ->with('success', 'SEO data updated successfully.');
     }
 
@@ -190,7 +189,7 @@ class SeoController extends Controller
         }));
     }
 
-    public function destroy(SeoMeta $seo)
+    public function destroy(string $role, SeoMeta $seo)
     {
         if ($seo->og_image) {
             Storage::disk('public')->delete($seo->og_image);

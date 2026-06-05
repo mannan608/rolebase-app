@@ -11,7 +11,7 @@
         </div>
 
         <div class="mb-4">
-            <form action="{{ route('admin.seo.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ role_route('role.seo.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 <div class="space-y-3">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
