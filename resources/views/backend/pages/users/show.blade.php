@@ -10,7 +10,7 @@
 
             @can('user.edit')
                 <a href="{{ role_route('role.users.edit', ['user' => $user]) }}"
-                    class="inline-flex items-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+                    class="inline-flex items-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
                     Edit User
                 </a>
             @endcan

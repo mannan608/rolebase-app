@@ -16,11 +16,23 @@ class MenuHelper
                 'permission' => 'dashboard.view',
             ],
             [
-                'name' => 'Manage Courses',
+                'name' => 'Manage SEO',
                 'icon' => 'pages',
-                'path' => self::rolePath('courses'),
-                'permission' => 'course.list',
+                'route' => 'role.seo.index',
+                'permission' => 'seo.list',
             ],
+             [
+                'name' => 'Manage Blog',
+                'icon' => 'pages',
+                'route' => 'role.blogs.index',
+                'permission' => 'blog.list',
+            ],
+                [
+                    'name' => 'Manage Events',
+                    'icon' => 'calendar',
+                    'route' => 'role.events.index',
+                    'permission' => 'event.list',
+                ],
             [
                 'name' => 'Roles & Permissions',
                 'icon' => 'pages',
@@ -34,14 +46,14 @@ class MenuHelper
                 'permission' => 'user.list',
             ],
 
-            [
-                'name' => 'Reports',
-                'icon' => 'reports',
-                'subItems' => [
-                    ['name' => 'User Reports', 'path' => self::rolePath('user-reports'), 'permission' => 'report.user.view'],
-                    ['name' => 'Course Reports', 'path' => self::rolePath('course-reports'), 'permission' => 'report.course.view'],
-                ],
-            ],
+            // [
+            //     'name' => 'Reports',
+            //     'icon' => 'reports',
+            //     'subItems' => [
+            //         ['name' => 'User Reports', 'path' => self::rolePath('user-reports'), 'permission' => 'report.user.view'],
+            //         ['name' => 'Course Reports', 'path' => self::rolePath('course-reports'), 'permission' => 'report.course.view'],
+            //     ],
+            // ],
 
         ];
     }

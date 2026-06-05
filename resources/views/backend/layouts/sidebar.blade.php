@@ -47,9 +47,20 @@
             return this.openSubmenus[key] || false;
         },
         isActive(path) {
-            if (!path) return false;
-            const normalizedPath = path.replace(/\/+$/, '');
+            if (!path || path === '#') return false;
+            
+            let normalizedPath = path;
+            if (path.includes('://')) {
+                try {
+                    normalizedPath = new URL(path).pathname;
+                } catch (e) {
+                    return false;
+                }
+            }
+            
+            normalizedPath = normalizedPath.replace(/\/+$/, '');
             const current = window.location.pathname.replace(/\/+$/, '');
+            
             return current === normalizedPath || current.startsWith(normalizedPath + '/');
         }
     }"

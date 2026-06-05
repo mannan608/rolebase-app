@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {{-- <title>{{ $title }}</title> --}}
-    <x-frontend.seo-meta />
-    <link rel="stylesheet" href="{{ asset('css/front-end-custom.css') }}">
-     @vite(['resources/css/app.css', 'resources/js/app.js'])
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ $title ?? 'Dashboard' }} | HBD Services</title>
+
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Alpine.js -->
+    {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
 
     <!-- Theme Store -->
     <script>
@@ -89,18 +91,27 @@
         })();
     </script>
 </head>
-<body class="min-h-screen flex flex-col">
-    
-    @include('frontend.layouts.navbar')
 
-    <main class="flex-grow">
-       <div class="pt-22 md:pt-24 pb-12">
-         @yield('content')
-       </div>
-    </main>
+<body x-data="{ 'loaded': true}" x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
+const checkMobile = () => {
+    if (window.innerWidth < 1280) {
+        $store.sidebar.setMobileOpen(false);
+        $store.sidebar.isExpanded = false;
+    } else {
+        $store.sidebar.isMobileOpen = false;
+        $store.sidebar.isExpanded = true;
+    }
+};
+window.addEventListener('resize', checkMobile);">
 
-    @include('frontend.layouts.footer')
+    {{-- preloader --}}
+    <x-preloader/>
+    {{-- preloader end --}}
 
-    @stack('scripts')
+    @yield('content')
+
 </body>
+
+@stack('scripts')
+
 </html>

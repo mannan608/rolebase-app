@@ -260,14 +260,14 @@
 
         <div class="bg-white py-4 w-full h-20 mt-10 relative flex justify-end px-4">
             <div class="">
-                <button type="submit" class=" px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-lg">
+                <button type="submit" class=" px-6 py-3 bg-brand-600 hover:bg-brand-600 text-white rounded-lg">
                     Save Event
                 </button>
             </div>
         </div>
         {{-- <div class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-50 px-4 py-4">
             <div class="max-w-7xl mx-auto flex justify-end">
-                <button type="submit" class="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-lg">
+                <button type="submit" class="px-6 py-3 bg-brand-600 hover:bg-brand-600 text-white rounded-lg">
                     Save Event
                 </button>
             </div>
@@ -275,7 +275,7 @@
         {{-- <div class="fixed bottom-0 right-0 -translate-x-1/2 max-w-(--breakpoint-2xl) w-full px-4 md:px-6 z-50">
 
             <div class="bg-white border-t shadow-lg rounded-t-xl py-4 flex justify-end">
-                <button type="submit" class="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-lg">
+                <button type="submit" class="px-6 py-3 bg-brand-600 hover:bg-brand-600 text-white rounded-lg">
                     Save Event
                 </button>
             </div>

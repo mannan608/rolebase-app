@@ -102,7 +102,7 @@
 
                             {{-- Submit --}}
                             <button type="submit"
-                                class="w-full rounded-xl bg-brand-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-brand-700">
+                                class="w-full rounded-xl bg-brand-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-brand-600">
 
                                 Update Blog
 
