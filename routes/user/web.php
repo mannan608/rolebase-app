@@ -24,3 +24,5 @@ Route::get('/events', [EventController::class, 'index'])
 
 Route::get('/events/{slug}', [EventController::class, 'show'])
     ->name('event-details');
+
+Route::get('/register', [FrontendController::class, 'registration'])->name('register');

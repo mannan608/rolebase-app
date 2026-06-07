@@ -13,13 +13,8 @@ class FrontendController extends Controller
 
     public function landingPage()
     {
-        // Get only the first 3 courses for the landing page
-        $courses = $this->getCourses()->take(3);
-
-        
         return view('frontend.pages.home', [
-            'title' => 'Specter Training Center', 
-            'courses' => $courses
+            'title' => 'Specter Training Center',
         ]);
     }
 
@@ -32,7 +27,8 @@ class FrontendController extends Controller
     {
         return view('frontend.pages.contact', ['title' => 'Contact Us']);
     }
-
-
- 
+    public function registration()
+    {
+        return view('frontend.pages.register', ['title' => 'Register']);
+    }
 }
