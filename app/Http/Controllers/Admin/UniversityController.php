@@ -4,23 +4,26 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUniversityRequest;
+use App\Http\Requests\UpdateUniversityRequest;
 use App\Repositories\Interfaces\UniversityRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Spatie\Permission\Models\Role;
 
 class UniversityController extends Controller
 {
-     public function __construct(
-        private readonly UniversityRepositoryInterface $university,
-    ) {}
+    public function __construct(
+        UniversityRepositoryInterface $universityRepository,
+    ) {
+        $this->universityRepository = $universityRepository;
+    }
+
        public function index(Request $request): View
     {
          $request->user()->can('university.list') || abort(403);
 
         return view('backend.pages.universities.index', [
-            'universities' => $this->university->paginate(),
+            'universities' => $this->universityRepository->paginate(),
             'title' => 'Universities',
         ]);
     }
@@ -36,7 +39,7 @@ class UniversityController extends Controller
 
     public function store(StoreUniversityRequest $request): RedirectResponse
     {
-        $this->university->create($request->validated());
+        $this->universityRepository->create($request->validated());
         return redirect()
             ->route('university.index')
             ->with('success', 'University created successfully.');
@@ -47,7 +50,7 @@ class UniversityController extends Controller
         $request->user()->can('university.view') || abort(403);
 
         return view('backend.pages.universities.show', [
-            'university' => $roles_permission,
+            'university' => $this->universityRepository->find($request->route('university')),
             'title' => 'University Details',
         ]);
        
@@ -58,15 +61,34 @@ class UniversityController extends Controller
         $request->user()->can('university.edit') || abort(403);
 
         return view('backend.pages.universities.edit', [
-            'university' => null,
+            'university' => $this->universityRepository->find($request->route('university')),
             'title' => 'Edit University',
         ]);
        
     }
 
-    public function update(StoreUniversityRequest $request, string $role ): RedirectResponse
+    public function update(UpdateUniversityRequest $request, string $role ): RedirectResponse
     {
-        $this->university->update($request->validated());
+        $this->universityRepository->update($request->route('university'), $request->validated());
+        return redirect()
+            ->route('university.index')
+            ->with('success', 'University updated successfully.');
+    }
+
+    public function edit(Request $request, string $role): View
+    {
+        $request->user()->can('university.edit') || abort(403);
+
+        return view('backend.pages.universities.edit', [
+            'university' => $this->universityRepository->find($request->route('university')),
+            'title' => 'Edit University',
+        ]);
+       
+    }
+
+    public function update(UpdateUniversityRequest $request, string $role ): RedirectResponse
+    {
+        $this->universityRepository->update($request->route('university'), $request->validated());
         return redirect()
             ->route('university.index')
             ->with('success', 'University updated successfully.');
@@ -74,7 +96,7 @@ class UniversityController extends Controller
 
     public function destroy(Request $request, ): RedirectResponse
     {
-        $this->university->delete($request->validated());
+        $this->universityRepository->delete($request->route('university'));
         return redirect()
             ->route('university.index')
             ->with('success', 'University deleted successfully.');
