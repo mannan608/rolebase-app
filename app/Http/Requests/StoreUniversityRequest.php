@@ -20,6 +20,8 @@ class StoreUniversityRequest extends FormRequest
             'phone' => 'nullable|max:50',
             'website' => 'nullable|url',
             'description' => 'nullable',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
             'country' => 'nullable|max:100',
             'state' => 'nullable|max:100',
             'city' => 'nullable|max:100',

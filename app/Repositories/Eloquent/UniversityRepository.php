@@ -1,32 +1,37 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Eloquent;
 
 use App\Models\University;
 use App\Repositories\Interfaces\UniversityRepositoryInterface;
 
 class UniversityRepository implements UniversityRepositoryInterface
 {
-    public function getAll(array $filters = [])
+    public function all()
     {
-        return University::query()
-            ->when(
-                $filters['search'] ?? null,
-                fn ($q, $search) =>
-                $q->where('name', 'like', "%{$search}%")
-            )
-            ->when(
-                $filters['status'] ?? null,
-                fn ($q, $status) =>
-                $q->where('status', $status)
-            )
+        return University::with('seoMeta')
             ->latest()
-            ->paginate(20);
+            ->get();
     }
 
-    public function find(int $id)
+    public function paginate($limit = 10)
     {
-        return University::findOrFail($id);
+        return University::with('seoMeta')
+            ->latest()
+            ->paginate($limit);
+    }
+
+    public function findById($id)
+    {
+        return University::with('seoMeta')
+            ->findOrFail($id);
+    }
+
+    public function findBySlug($slug)
+    {
+        return University::where('slug', $slug)
+            ->where('status', 'active')
+            ->firstOrFail();
     }
 
     public function create(array $data)
@@ -34,17 +39,17 @@ class UniversityRepository implements UniversityRepositoryInterface
         return University::create($data);
     }
 
-    public function update(int $id, array $data)
+    public function update($id, array $data)
     {
-        $university = $this->find($id);
+        $university = $this->findById($id);
 
         $university->update($data);
 
         return $university;
     }
 
-    public function delete(int $id)
+    public function delete($id)
     {
-        return $this->find($id)->delete();
+        return University::destroy($id);
     }
 }

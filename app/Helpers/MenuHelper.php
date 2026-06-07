@@ -51,7 +51,7 @@ class MenuHelper
             [
                 'name' => 'Manage University',
                 'icon' => 'pages',
-                'route' => 'role.university.index',
+                'route' => 'role.universities.index',
                 'permission' => 'university.list',
             ],
 
