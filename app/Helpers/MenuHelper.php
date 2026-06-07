@@ -21,21 +21,23 @@ class MenuHelper
                 'route' => 'role.seo.index',
                 'permission' => 'seo.list',
             ],
-             [
+
+            [
                 'name' => 'Manage Blog',
                 'icon' => 'pages',
                 'route' => 'role.blogs.index',
                 'permission' => 'blog.list',
             ],
-                [
-                    'name' => 'Manage Events',
-                    'icon' => 'calendar',
-                    'route' => 'role.events.index',
-                    'permission' => 'event.list',
-                ],
+            [
+                'name' => 'Manage Events',
+                'icon' => 'calendar',
+                'route' => 'role.events.index',
+                'permission' => 'event.list',
+            ],
+      
             [
                 'name' => 'Roles & Permissions',
-                'icon' => 'pages',
+                'icon' => 'authentication',
                 'route' => 'role.roles-permissions.index',
                 'permission' => 'role.list',
             ],
@@ -71,7 +73,7 @@ class MenuHelper
 
     public static function rolePath(string $path): string
     {
-        return '/'.trim((string) user_role_prefix(), '/').'/'.trim($path, '/');
+        return '/' . trim((string) user_role_prefix(), '/') . '/' . trim($path, '/');
     }
 
     public static function itemUrl(array $item): string
