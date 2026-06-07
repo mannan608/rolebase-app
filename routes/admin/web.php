@@ -46,4 +46,5 @@ Route::prefix('{role}')
         Route::resource('roles-permissions', RolePermissionController::class);
 
         Route::resource('users', UserController::class);
+        Route::resource('universities', UniversityController::class);
     });

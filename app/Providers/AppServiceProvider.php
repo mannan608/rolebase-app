@@ -11,7 +11,9 @@ use App\Repositories\Interfaces\BlogRepositoryInterface;
 use App\Repositories\Interfaces\EventRepositoryInterface;
 use App\Repositories\Interfaces\PermissionRepositoryInterface;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
+use App\Repositories\Interfaces\UniversityRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\UniversityRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -47,6 +49,10 @@ class AppServiceProvider extends ServiceProvider
             UserRepositoryInterface::class,
             UserRepository::class
         );
+        $this->app->bind(
+        UniversityRepositoryInterface::class,
+        UniversityRepository::class
+    );
     }
 
     /**

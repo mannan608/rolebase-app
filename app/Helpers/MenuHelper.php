@@ -34,7 +34,7 @@ class MenuHelper
                 'route' => 'role.events.index',
                 'permission' => 'event.list',
             ],
-      
+
             [
                 'name' => 'Roles & Permissions',
                 'icon' => 'authentication',
@@ -46,6 +46,12 @@ class MenuHelper
                 'icon' => 'user-profile',
                 'route' => 'role.users.index',
                 'permission' => 'user.list',
+            ],
+            [
+                'name' => 'Universities',
+                'icon' => 'pages',
+                'route' => 'role.universities.index',
+                'permission' => 'university.list',
             ],
 
             // [

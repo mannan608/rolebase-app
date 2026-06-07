@@ -18,7 +18,7 @@ class RolePermissionSeeder extends Seeder
 
         $permissions = [
             'dashboard.view',
-
+            // User permissions
             'user.list',
             'user.view',
             'user.create',
@@ -26,7 +26,7 @@ class RolePermissionSeeder extends Seeder
             'user.delete',
             'user.impersonate',
             'user.status.change',
-
+            // Role permissions
             'role.list',
             'role.view',
             'role.create',
@@ -35,7 +35,7 @@ class RolePermissionSeeder extends Seeder
             'role.manage',
             // 'permission.list',
             // 'permission.sync',
-
+            // Blog permissions
             'blog.list',
             'blog.view',
             'blog.create',
@@ -43,7 +43,7 @@ class RolePermissionSeeder extends Seeder
             'blog.delete',
             'blog.publish',
             'blog.manage',
-
+            // Event permissions
             'event.list',
             'event.view',
             'event.create',
@@ -51,12 +51,21 @@ class RolePermissionSeeder extends Seeder
             'event.delete',
             'event.manage',
 
+            // SEO permissions
             'seo.list',
             'seo.view',
             'seo.create',
             'seo.edit',
             'seo.delete',
             'seo.manage',
+
+            // University permissions
+            'university.list',
+            'university.create',
+            'university.view',
+            'university.status.change',
+            'university.edit',
+            'university.delete',
         ];
 
         foreach ($permissions as $permission) {
