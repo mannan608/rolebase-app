@@ -2,13 +2,19 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\Models\Campus;
+
 interface CampusRepositoryInterface
 {
-    public function all();
-    public function paginate($limit = 10);
-    public function findById($id);
-    public function findBySlug($slug);
-    public function create(array $data);
-    public function update($id, array $data);
-    public function delete($id);
+    public function paginate(int $perPage = 15);
+
+    public function universities();
+
+    public function findById(int $id): Campus;
+
+    public function create(array $data): Campus;
+
+    public function update(Campus $campus, array $data): Campus;
+
+    public function delete(Campus $campus): bool;
 }
