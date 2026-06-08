@@ -2,13 +2,20 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\Models\University;
+use Illuminate\Http\Request;
+
 interface UniversityRepositoryInterface
 {
-    public function all();
-    public function paginate($limit = 10);
-    public function findById($id);
-    public function findBySlug($slug);
-    public function create(array $data);
-    public function update($id, array $data);
-    public function delete($id);
+    public function paginate(int $perPage = 15);
+
+    public function findById(int $id): University;
+
+    public function create(array $data, Request $request): University;
+
+    public function update(University $university,array $data,Request $request): University;
+
+    public function delete(
+        University $university
+    ): bool;
 }
