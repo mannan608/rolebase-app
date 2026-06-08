@@ -26,7 +26,6 @@ class UpdateUniversityRequest extends FormRequest
             'state' => 'nullable|max:100',
             'city' => 'nullable|max:100',
             'address' => 'nullable',
-            'status' => 'required|in:active,inactive',
         ];
     }
 }

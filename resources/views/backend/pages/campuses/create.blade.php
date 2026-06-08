@@ -1,8 +1,7 @@
 @extends('backend.layouts.app')
 
 @section('content')
-    <form action="{{ role_route('role.campuses.create') }}" method="POST" enctype="multipart/form-data">
-        <form action="{{ role_route('role.campuses.store') }}" method="POST">
+        <form action="{{ role_route('role.campuses.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
@@ -86,6 +85,13 @@
             </div>
 
         </form>
-
-    </form>
+        {{-- @if ($errors->any())
+    <div class="bg-red-100 p-4 rounded">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif --}}
 @endsection

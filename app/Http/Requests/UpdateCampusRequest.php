@@ -32,8 +32,6 @@ class UpdateCampusRequest extends FormRequest
         'city' => ['nullable'],
         'address' => ['nullable'],
         'description' => ['nullable'],
-        'status' => ['required'],
-        'sort_order' => ['nullable', 'integer'],
     ];
     }
 }

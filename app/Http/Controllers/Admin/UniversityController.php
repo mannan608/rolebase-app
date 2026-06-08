@@ -7,7 +7,6 @@ use App\Http\Requests\StoreUniversityRequest;
 use App\Http\Requests\UpdateUniversityRequest;
 use App\Models\University;
 use App\Repositories\Interfaces\UniversityRepositoryInterface;
-use App\SEO\Models\SeoMeta;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -78,13 +77,12 @@ class UniversityController extends Controller
             if ($request->hasFile('banner')) {
                 $universityData['banner'] = $this->uploadFile($request->file('banner'), 'uploads/universities/banners');
             }
-
+            $this->universityRepository->create($universityData);
             DB::commit();
 
             return redirect()
                 ->route('role.universities.index', ['role' => $request->route('role')])
                 ->with('success', 'University created successfully.');
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', $e->getMessage());
@@ -157,7 +155,6 @@ class UniversityController extends Controller
             return redirect()
                 ->route('role.universities.index', ['role' => $request->route('role')])
                 ->with('success', 'University updated successfully.');
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', $e->getMessage());

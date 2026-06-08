@@ -52,11 +52,8 @@ class CampusController extends Controller
             ->with('success', 'Campus created successfully.');
     }
 
-    public function show(
-        Request $request,
-        string $role,
-        Campus $campus
-    ): View {
+    public function show(Request $request, string $role, Campus $campus): View
+    {
         $request->user()->can('campus.view') || abort(403);
 
         return view('backend.pages.campuses.show', [
@@ -65,11 +62,7 @@ class CampusController extends Controller
         ]);
     }
 
-    public function edit(
-        Request $request,
-        string $role,
-        Campus $campus
-    ): View {
+    public function edit(Request $request,string $role, Campus $campus): View {
         $request->user()->can('campus.edit') || abort(403);
 
         return view('backend.pages.campuses.edit', [
