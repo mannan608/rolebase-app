@@ -47,12 +47,19 @@ class MenuHelper
                 'route' => 'role.users.index',
                 'permission' => 'user.list',
             ],
-            
+
             [
                 'name' => 'Manage University',
                 'icon' => 'pages',
                 'route' => 'role.universities.index',
                 'permission' => 'university.list',
+            ],
+
+            [
+                'name' => 'Campuses',
+                'icon' => 'building',
+                'route' => 'role.campuses.index',
+                'permission' => 'campus.list',
             ],
 
             // [

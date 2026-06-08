@@ -3,9 +3,9 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\University;
-use App\Repositories\Interfaces\UniversityRepositoryInterface;
+use App\Repositories\Interfaces\CampusRepositoryInterface;
 
-class UniversityRepository implements UniversityRepositoryInterface
+class CampusRepository implements CampusRepositoryInterface
 {
     public function all()
     {

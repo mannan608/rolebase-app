@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\CampusController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\RolePermissionController;
 use App\Http\Controllers\Admin\UniversityController;
@@ -48,4 +49,5 @@ Route::prefix('{role}')
 
         Route::resource('users', UserController::class);
         Route::resource('universities', UniversityController::class);
+        Route::resource('campuses', CampusController::class);
     });

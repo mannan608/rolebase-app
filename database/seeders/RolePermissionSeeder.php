@@ -66,6 +66,13 @@ class RolePermissionSeeder extends Seeder
             'university.status.change',
             'university.edit',
             'university.delete',
+
+            // Campus permissions
+            'campus.list',
+            'campus.create',
+            'campus.view',
+            'campus.edit',
+            'campus.delete',
         ];
 
         foreach ($permissions as $permission) {

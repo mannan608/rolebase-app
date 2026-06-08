@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Repositories\Eloquent\BlogRepository;
+use App\Repositories\Eloquent\CampusRepository;
 use App\Repositories\Eloquent\EventRepository;
 use App\Repositories\Eloquent\PermissionRepository;
 use App\Repositories\Eloquent\RoleRepository;
@@ -14,6 +15,7 @@ use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Interfaces\UniversityRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Eloquent\UniversityRepository;
+use App\Repositories\Interfaces\CampusRepositoryInterface;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -50,9 +52,13 @@ class AppServiceProvider extends ServiceProvider
             UserRepository::class
         );
         $this->app->bind(
-        UniversityRepositoryInterface::class,
-        UniversityRepository::class
-    );
+            UniversityRepositoryInterface::class,
+            UniversityRepository::class
+        );
+        $this->app->bind(
+            CampusRepositoryInterface::class,
+            CampusRepository::class
+        );
     }
 
     /**
