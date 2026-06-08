@@ -47,6 +47,7 @@ class UniversityController extends Controller
     public function store(StoreUniversityRequest $request): RedirectResponse
     {
         $data = $request->validated();
+
         $universityData = [];
 
         DB::beginTransaction();

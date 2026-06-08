@@ -78,7 +78,7 @@
             </div>
 
             <div class="lg:col-span-4">
-                <div class="sticky top-6 space-y-6">
+                <div class="space-y-6">
 
                     {{-- Logo --}}
                     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
@@ -127,4 +127,5 @@
             </div>
         </div>
     </form>
+   
 @endsection

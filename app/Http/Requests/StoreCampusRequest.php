@@ -23,7 +23,7 @@ class StoreCampusRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'university_id' => ['required', 'exists:universities,id'],
+        'university_id' => ['required'],
         'name' => ['required', 'max:255'],
         'email' => ['nullable', 'email'],
         'phone' => ['nullable'],
