@@ -1,234 +1,91 @@
 @extends('backend.layouts.app')
 
-@section('title', $title)
-
 @section('content')
+    <form action="{{ role_route('role.campuses.create') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ role_route('role.campuses.store') }}" method="POST">
+            @csrf
 
-<div class="max-w-7xl mx-auto">
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
 
-    <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
-            Create University
-        </h2>
-    </div>
+                <div class="lg:col-span-8 space-y-6">
 
-    <form action="{{ route('role.universities.store', ['role' => request()->route('role')]) }}"
-          method="POST"
-          enctype="multipart/form-data">
-        @csrf
+                    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
 
-        <div class="p-6">
+                        <div class="border-b border-gray-100 p-5 dark:border-gray-800">
+                            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
+                                Campus Information
+                            </h2>
+                        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-5 space-y-5">
 
-                <!-- University Name -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        University Name <span class="text-red-500">*</span>
-                    </label>
+                            {{-- University --}}
+                            <div>
+                                <label class="mb-2 block text-sm font-medium">
+                                    University
+                                </label>
 
-                    <input
-                        type="text"
-                        name="name"
-                        value="{{ old('name') }}"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('name') border-red-500 @enderror">
+                                <select name="university_id" class="w-full rounded-lg border border-gray-300 px-4 py-2">
+                                    <option value="">
+                                        Select University
+                                    </option>
 
-                    @error('name')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                    @enderror
-                </div>
+                                    @foreach ($universities as $university)
+                                        <option value="{{ $university->id }}" @selected(old('university_id') == $university->id)>
+                                            {{ $university->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
 
-                <!-- Short Name -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Short Name
-                    </label>
+                                @error('university_id')
+                                    <p class="mt-1 text-sm text-red-500">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
 
-                    <input
-                        type="text"
-                        name="short_name"
-                        value="{{ old('short_name') }}"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
+                            {{-- Name --}}
+                            <x-form.input-text name="name" label="Campus Name" value="{{ old('name') }}"
+                                placeholder="Enter campus name..." />
 
-                <!-- Email -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Email
-                    </label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                    <input
-                        type="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
+                                <x-form.input-text name="email" label="Email" type="email"
+                                    value="{{ old('email') }}" />
 
-                <!-- Phone -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Phone
-                    </label>
+                                <x-form.input-text name="phone" label="Phone" value="{{ old('phone') }}" />
 
-                    <input
-                        type="text"
-                        name="phone"
-                        value="{{ old('phone') }}"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
+                            </div>
 
-                <!-- Website -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Website
-                    </label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-                    <input
-                        type="url"
-                        name="website"
-                        value="{{ old('website') }}"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
+                                <x-form.input-text name="country" label="Country" value="{{ old('country') }}" />
 
-                <!-- Status -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Status
-                    </label>
+                                <x-form.input-text name="state" label="State" value="{{ old('state') }}" />
 
-                    <select
-                        name="status"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <x-form.input-text name="city" label="City" value="{{ old('city') }}" />
 
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                            </div>
 
-                    </select>
-                </div>
+                            <x-form.textarea-input name="address" label="Address" rows="3"
+                                placeholder="Campus address..." />
 
-                <!-- Country -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Country
-                    </label>
+                            <x-form.textarea-input name="description" label="Description" rows="5"
+                                placeholder="Campus description..." />
 
-                    <input
-                        type="text"
-                        name="country"
-                        value="{{ old('country') }}"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2">
-                </div>
+                        </div>
 
-                <!-- State -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        State
-                    </label>
+                    </div>
+                    <button type="submit"
+                        class="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                        Create Campus
+                    </button>
 
-                    <input
-                        type="text"
-                        name="state"
-                        value="{{ old('state') }}"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2">
-                </div>
-
-                <!-- City -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        City
-                    </label>
-
-                    <input
-                        type="text"
-                        name="city"
-                        value="{{ old('city') }}"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2">
-                </div>
-
-                <!-- Sort Order -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Sort Order
-                    </label>
-
-                    <input
-                        type="number"
-                        name="sort_order"
-                        value="{{ old('sort_order', 0) }}"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2">
-                </div>
-
-                <!-- Logo -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Logo
-                    </label>
-
-                    <input
-                        type="file"
-                        name="logo"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2">
-                </div>
-
-                <!-- Banner -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Banner
-                    </label>
-
-                    <input
-                        type="file"
-                        name="banner"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2">
                 </div>
 
             </div>
 
-            <!-- Address -->
-            <div class="mt-6">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Address
-                </label>
-
-                <textarea
-                    name="address"
-                    rows="3"
-                    class="w-full rounded-lg border border-gray-300 px-4 py-2">{{ old('address') }}</textarea>
-            </div>
-
-            <!-- Description -->
-            <div class="mt-6">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Description
-                </label>
-
-                <textarea
-                    name="description"
-                    rows="5"
-                    class="w-full rounded-lg border border-gray-300 px-4 py-2">{{ old('description') }}</textarea>
-            </div>
-
-        </div>
-
-        <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-end gap-3">
-
-            <a href="{{ route('role.universities.index', ['role' => request()->route('role')]) }}"
-               class="px-5 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700">
-                Cancel
-            </a>
-
-            <button
-                type="submit"
-                class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-                Save University
-            </button>
-
-        </div>
+        </form>
 
     </form>
-
-</div>
-
-</div>
 @endsection

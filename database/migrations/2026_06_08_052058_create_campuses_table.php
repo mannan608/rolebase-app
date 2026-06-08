@@ -11,37 +11,37 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('campuses', function (Blueprint $table) {
-    $table->id();
+        Schema::create('campuses', function (Blueprint $table) {
+            $table->id();
 
-    $table->foreignId('university_id')
-        ->constrained()
-        ->cascadeOnDelete();
+            $table->foreignId('university_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->string('name');
-    $table->string('slug')->unique();
+            $table->string('name');
+            $table->string('slug')->unique();
 
-    $table->string('email')->nullable();
-    $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
 
-    $table->string('country')->nullable();
-    $table->string('state')->nullable();
-    $table->string('city')->nullable();
+            $table->string('country')->nullable();
+            $table->string('state')->nullable();
+            $table->string('city')->nullable();
 
-    $table->text('address')->nullable();
+            $table->text('address')->nullable();
 
-    $table->text('description')->nullable();
+            $table->text('description')->nullable();
 
-    $table->enum('status', [
-        'active',
-        'inactive'
-    ])->default('active');
+            $table->enum('status', [
+                'active',
+                'inactive'
+            ])->default('active');
 
-    $table->integer('sort_order')
-        ->default(0);
+            $table->integer('sort_order')
+                ->default(0);
 
-    $table->timestamps();
-});
+            $table->timestamps();
+        });
     }
 
     /**
